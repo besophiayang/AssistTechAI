@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link href="https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+    
+#canvas {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background-color: #395BD3;
+    z-index: 1;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+    background-size: 0.2in 0.2in;
+    background-position: -1px -1px;
+}
+
+.shape {
+    position: absolute;
+    border: solid 2px white;
+}
+
+.handle {
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    position: absolute;
+    display: none;
+}
+
+.polygon-handle {
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    position: absolute;
+}
+
+.selected {
+    border: 3px dashed #ffffff;
+}
+
+.handle {
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    position: absolute;
+    display: none;
+}
+
+.handle.tl { top: -5px; left: -5px; } 
+.handle.tr { top: -5px; right: -5px; } 
+.handle.bl { bottom: -5px; left: -5px; } 
+.handle.br { bottom: -5px; right: -5px; }
+
+.rotate-handle {
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: grab;
+    display: none;
+}
+
+.rotate-handle::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 16px;
+    background-color: #ffffff;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+}
+
+.hidden {
+    display: none;
+}
+
+#sidebar {
+    position: fixed;
+    left: 10px;
+    top: 40px;
+    width: 40px;
+    background-color: #314baa;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    border-radius: 2px;
+}
+
+textarea.selected {
+    border: 2px dashed #ffffff;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+#buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    gap: 15px;
+    margin-top: 20px; 
+}
+
+#buttonContainer button {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 100px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#buttonContainer button img {
+    width: 30px;
+    height: auto;
+}
+
+
+.shapePropertiesBox, .textPropertiesBox {
+    position: absolute; 
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #314baa;
+    padding: 10px;
+    top: 100px; 
+    right: 100px; 
+    background-color: #314baa;
+    border-radius: 5px;
+    color: white;
+    z-index: 3;
+    max-width: 300px;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+#colorPicker, #textColor {
+    width: 50px;
+    height: 30px;
+    background-color: white;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+#shapeWidth, #shapeHeight, #shapeDepth, #fontSize {
+    width: 90px;
+    height: 20px;
+    background-color: white;
+    border-radius: 2px;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+#shapeMaterial {
+    width: 200px;
+    height: 26px;
+    background-color: white;
+    border-radius: 2px;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+#fontType {
+    width: 150px;
+    height: 26px;
+    background-color: white;
+    border-radius: 2px;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+.width-height-container {
+    display: flex;
+}
+
+#shapeWidth, #shapeHeight {
+    margin-right: 5px;
+}
+
+.property {
+    display: flex;
+    flex-direction: column; 
+    margin-bottom: 10px;
+}
+
+#shapeProperties label {
+    font-size: 12px; 
+    margin-bottom: 5px;
+}
+
+#shapeProperties input[type="number"],
+#shapeProperties input[type="color"],
+#shapeProperties select {
+    color: #1a2651;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+.text-style-btn {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.text-style-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.text-style-btn.active {
+    background-color: #ddd;
+}
+
+.text-property {
+    display: flex;
+    flex-direction: row; 
+    margin-bottom: 10px;
+}
+
+#textProperties label {
+    font-size: 12px; 
+    margin-bottom: 5px;
+}
+
+.dimension {
+    display: none;
+    position: absolute;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    padding: 2px 4px;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.top-dimension {
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.right-dimension {
+    right: -50px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.bottom-dimension {
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.left-dimension {
+    left: -50px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+#chatbox {
+    position: fixed;
+    bottom: 30px;
+    right: 80px;
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border: 3px solid #314baa;
+    display: none;
+    border-radius: 10px;
+    overflow: auto;
+}
+
+#chatInput {
+    position: absolute;
+    bottom: 10px;
+    left: 8px;
+    right: 35px; 
+    height: 20px;
+    padding: 5px;
+    background-color: #ededed;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-family: "Istok Web", Arial, sans-serif;
+}
+
+#chatImage {
+    position: absolute;
+    bottom: 20px;
+    right: 12px; 
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#chatContent {
+    position: relative;
+    height: calc(100% - 50px); 
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse; 
+    gap: 5px;
+}
+
+.message {
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+.user-message {
+    align-self: flex-end; 
+    background-color: #e0e0e0 ; 
+    margin-right: 5px;
+}
+.assistant-message {
+    align-self: flex-start; 
+    background-color: #bcc4e0; 
+    margin-left: 5px;
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-end; 
+    gap: 5px;
+    overflow-y: auto;
+    height: calc(100% - 50px); 
+}
+
+#chatContent::-webkit-scrollbar {
+    width: 5px; 
+}
+
+#chatContent::-webkit-scrollbar-track {
+    background-color: transparent; 
+}
+
+
+#chatContent::-webkit-scrollbar-thumb {
+    background-color: #ccc; 
+    border-radius: 5px;
+}
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssistTechAI</title>
+</head>
+
+<body>
+
+    <div id="sidebar">
+        <div id="buttonContainer">
+            <button onclick="createShape('rect')"><img src="square.png" alt="Rectangle"></button>
+            <button onclick="createShape('circle')"><img src="circle.png" alt="Circle"></button>
+            <button onclick="createShape('parallelogram')"><img src="parallelogram.png" style="width: 36px; height: 36px;" alt="Parallelogram"></button>
+            <button onclick="createTextField()"><img src="text.png" style="width: 28px; height: 28px;" alt="Text Field"></button>
+            <button onclick="measure()"><img src="ruler.png" alt="Ruler"></button>
+            <button onclick="deleteShape()"><img src="delete.png" alt="Delete"></button>
+        </div>
+    </div>
+    <div id="canvas">
+        <img id="customImage" src="HomeLogo.png" alt="Custom Image" style="position: absolute; top: 10px; right: 30px; cursor: pointer; height: 70px">
+        <img id="axiImage" src="Axi.png" alt="Custom Image" style="position: absolute; bottom: 20px; right: 20px; width: 50px; height: 50px; cursor: pointer;" onclick="toggleChatbox()">
+
+        <div id="chatbox">
+            <div id="chatContent" class="message-container"></div>
+            <input id="chatInput" type="text" placeholder="Type your message..." onkeyup="handleChatInput(event)">
+            <img id="chatImage" src="send-message.png" alt="Image" onclick="sendMessage()">
+        </div>
+    
+        
+    
+        
+</div>
+    </div>
+    <div class="shapePropertiesBox">
+        <div id="shapeProperties" class="hidden">
+            <h3>Shape Properties</h3>
+            <div class="width-height-container">
+                <div class="property">
+                    <label for="shapeWidth">Width</label>
+                    <input type="number" id="shapeWidth" min="1" step="1" placeholder="Width in px">
+                </div>
+                <div class="property">
+                    <label for="shapeHeight">Height</label>
+                    <input type="number" id="shapeHeight" min="1" step="1" placeholder="Height in px">
+                </div>
+            </div>
+            <div class="property">
+                <label for="shapeDepth">Depth (in default unit)</label>
+                <input type="number" id="shapeDepth" min="1" step="1" placeholder="Depth">
+            </div>
+            <div class="property">
+                <label for="shapeMaterial">Material</label>
+                <select id="shapeMaterial">
+                    <option value="" selected disabled>--Select One--</option>
+                    
+                    <optgroup label="Thermoplastics">
+                        <option value="pla">PLA (Polylactic Acid)</option>
+                        <option value="abs">ABS (Acrylonitrile Butadiene Styrene)</option>
+                        <option value="petg">PETG (Polyethylene Terephthalate Glycol)</option>
+                        <option value="tpu">TPU (Thermoplastic Polyurethane)</option>
+                        <option value="hips">HIPS (High Impact Polystyrene)</option>
+                        <option value="asa">ASA (Acrylonitrile Styrene Acrylate)</option>
+                        <option value="pc">PC (Polycarbonate)</option>
+                        <option value="pp">PP (Polypropylene)</option>
+                        <option value="pekk">PEKK (Polyetherketoneketone)</option>
+                    </optgroup>
+                    
+                    <optgroup label="Composite Filaments">
+                        <option value="wood-filled">Wood-filled</option>
+                        <option value="metal-filled">Metal-filled</option>
+                        <option value="carbon-fiber-filled">Carbon Fiber-filled</option>
+                        <option value="stone-filled">Stone-filled</option>
+                        <option value="glass-filled">Glass-filled</option>
+                    </optgroup>
+                    
+                    <optgroup label="High Performance">
+                        <option value="nylon">Nylon</option>
+                        <option value="ultem">Ultem (PEI)</option>
+                        <option value="peek">PEEK (Polyether Ether Ketone)</option>
+                    </optgroup>
+                    
+                    <optgroup label="Flexible Filaments">
+                        <option value="tpe">TPE (Thermoplastic Elastomer)</option>
+                    </optgroup>  
+
+                </select>                
+            </div>
+        </div>
+    </div>
+    <div class="textPropertiesBox">
+        <div id="textProperties" class="hidden">
+            <h4>Text Properties</h4>
+            
+            <div class="text-property">
+                <button id="textBold" class="text-style-btn">B</button>
+                <button id="textItalic" class="text-style-btn">I</button>
+                <button id="textUnderline" class="text-style-btn">U</button>
+            </div>
+    
+            <div class="property">
+                <label for="textColor">Text Color</label>
+                <input type="color" id="textColor">
+            </div>
+    
+            <div class="property">
+                <label for="fontSize">Font Size</label>
+                <input type="number" id="fontSize" min="1" step="1" placeholder="Size in px">
+            </div>
+    
+            <div class="property">
+                <label for="fontType">Font Type</label>
+                <select id="fontType">
+                    <option value="Arial">Arial</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Georgia">Georgia</option>
+                </select>
+            </div>
+        </div>
+    </div>   
+</body>
+
+<script>
+    Array.from(shape.querySelectorAll('.handle')).forEach(handle => {
+        handle.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+
+            const sideLength = calculateSideLength(shape, handle);
+            showMeasurementTooltip(e.clientX, e.clientY, sideLength);
+        });
+    });
+    
+    const sidebar = document.getElementById('sidebar');
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    sidebar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - sidebar.getBoundingClientRect().left;
+        offsetY = e.clientY - sidebar.getBoundingClientRect().top;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        sidebar.style.left = (e.clientX - offsetX) + 'px';
+        sidebar.style.top = (e.clientY - offsetY) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js"></script>
+<script>
+    console.log("shapeMaterial element at the start:", document.getElementById('shapeMaterial'));
+    document.getElementById('shapeMaterial').addEventListener('change', function(e) {
+        console.log("shapeMaterial event listener triggered");
+        console.log("Current selected shape:", selectedShape);
+        if (selectedShape) {
+            selectedShape.setAttribute('data-material', e.target.value);
+            console.log("Setting material:", e.target.value);
+        }
+    });
+
+    document.getElementById('shapeDepth').addEventListener('input', function(e) {
+        if (selectedShape) {
+            selectedShape.setAttribute('data-depth', e.target.value);
+        }
+    });
+
+    let selectedShape = null;
+    let isEditingTextField = false;
+    let showDimensions = false;
+
+    function updateTextProperties(textField) {
+        const textColorControl = document.getElementById('textColor');
+        const fontSizeControl = document.getElementById('fontSize');
+        const fontTypeControl = document.getElementById('fontType');
+
+        textColorControl.value = textField.getAttribute('data-text-color') || textField.style.color;
+        fontSizeControl.value = textField.getAttribute('data-font-size') || textField.style.fontSize.replace('px', '');
+        fontTypeControl.value = textField.getAttribute('data-font-type') || textField.style.fontFamily;
+    }
+
+    function updateShapeProperties(shape) {
+        const widthControl = document.getElementById('shapeWidth');
+        const heightControl = document.getElementById('shapeHeight');
+        const depthControl = document.getElementById('shapeDepth');
+        const materialControl = document.getElementById('shapeMaterial');
+        console.log("updateShapeProperties material:", materialControl.value);
+
+        widthControl.value = shape.getAttribute('data-width') || shape.style.width.replace('px', '');
+        heightControl.value = shape.getAttribute('data-height') || shape.style.height.replace('px', '');
+        depthControl.value = shape.getAttribute('data-depth');
+        materialControl.value = shape.getAttribute('data-material');
+    }
+
+    function createTextField() {
+        const textField = document.createElement('textarea');
+        textField.setAttribute('placeholder', 'Insert your text here');
+        textField.style.position = 'absolute';
+        textField.style.top = '300px';
+        textField.style.left = '300px';
+        textField.style.width = '300px';
+        textField.style.height = '30px';
+        textField.style.resize = 'none'; 
+        textField.style.backgroundColor = 'transparent';
+        textField.style.color = 'white';
+        textField.className = 'custom-textarea';
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .custom-textarea::placeholder {
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+
+        textField.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (selectedShape) {
+                selectedShape.classList.remove('selected');
+                Array.from(selectedShape.querySelectorAll('.handle, .rotate-handle')).forEach(handle => handle.style.display = 'none');
+            }
+            selectedShape = textField;
+            textField.classList.add('selected');
+            document.getElementById('textProperties').classList.remove('hidden');
+
+            updateTextProperties(textField);
+        });
+
+        document.getElementById('canvas').appendChild(textField);
+
+        interact(textField)
+            .draggable({
+                listeners: {
+                    move(event) {
+                        const target = event.target;
+                        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
+                    }
+                }
+            })
+            .resizable({
+                edges: { left: true, right: true, bottom: true, top: true },
+                listeners: {
+                    move(event) {
+                        const target = event.target;
+                        let x = (parseFloat(target.getAttribute('data-x')) || 0);
+                        let y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+                        target.style.width = event.rect.width + 'px';
+                        target.style.height = event.rect.height + 'px';
+
+                        x += event.deltaRect.left;
+                        y += event.deltaRect.top;
+
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
+                    }
+                }
+            });
+        
+    }
+
+    function createShape(type) {
+        const shape = document.createElement('div');
+        shape.classList.add('shape');
+
+        ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+            const handle = document.createElement('div');
+            handle.classList.add('handle', pos);
+            shape.appendChild(handle);
+        });
+
+        const rotateHandle = document.createElement('div');
+        rotateHandle.classList.add('rotate-handle');
+        shape.appendChild(rotateHandle);
+
+        const topDimension = document.createElement('div');
+        topDimension.classList.add('dimension', 'top-dimension');
+        shape.appendChild(topDimension);
+
+        const rightDimension = document.createElement('div');
+        rightDimension.classList.add('dimension', 'right-dimension');
+        shape.appendChild(rightDimension);
+
+        const bottomDimension = document.createElement('div');
+        bottomDimension.classList.add('dimension', 'bottom-dimension');
+        shape.appendChild(bottomDimension);
+
+        const leftDimension = document.createElement('div');
+        leftDimension.classList.add('dimension', 'left-dimension');
+        shape.appendChild(leftDimension);
+
+        setRotationDrag(rotateHandle, shape);
+
+        let defaultWidth = '100px';
+        let defaultHeight = '100px';
+
+        switch (type) {
+            case 'rect':
+                break;
+            case 'circle':
+                shape.style.borderRadius = '50%';
+                break;
+            case 'parallelogram':
+                defaultWidth = '150px';
+                break;
+        }
+
+        shape.style.width = defaultWidth;
+        shape.style.height = defaultHeight;
+        shape.style.top = '300px';
+        shape.style.left = '300px';
+
+        shape.setAttribute('data-width', parseInt(defaultWidth, 10));
+        shape.setAttribute('data-height', parseInt(defaultHeight, 10));
+        shape.setAttribute('data-material', ''); 
+        shape.setAttribute('data-depth', '1');
+
+        shape.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (selectedShape) {
+                selectedShape.classList.remove('selected');
+                Array.from(selectedShape.querySelectorAll('.handle, .rotate-handle')).forEach(handle => handle.style.display = 'none');
+            }
+            selectedShape = shape;
+            shape.classList.add('selected');
+            Array.from(shape.querySelectorAll('.handle, .rotate-handle')).forEach(handle => handle.style.display = 'block');
+
+            const shapeMaterial = selectedShape.getAttribute('data-material');
+            const shapeDepth = selectedShape.getAttribute('data-depth');
+            
+            document.getElementById('shapeMaterial').value = shapeMaterial || ''; 
+            console.log("Material:", shapeMaterial)
+            document.getElementById('shapeDepth').value = shapeDepth || ''; 
+
+            document.getElementById('shapeProperties').classList.remove('hidden');
+            document.getElementById('shapeWidth').value = parseInt(window.getComputedStyle(shape).width, 10);
+            document.getElementById('shapeHeight').value = parseInt(window.getComputedStyle(shape).height, 10);
+
+            updateShapeProperties(shape);
+        });
+
+        document.getElementById('canvas').appendChild(shape);
+
+        function setRotationDrag(handle, shape) {
+            let startAngle = 0;
+            let center = {};
+
+            interact(handle).draggable({
+                startImmediate: false,
+                onstart: function (event) {
+                    const rect = shape.getBoundingClientRect();
+                    center = {
+                        x: rect.left + rect.width / 2,
+                        y: rect.top + rect.height / 2
+                    };
+                    const start = {
+                        x: event.clientX,
+                        y: event.clientY
+                    };
+                    startAngle = Math.atan2(start.y - center.y, start.x - center.x);
+                },
+                onmove: function (event) {
+                    const current = {
+                        x: event.clientX,
+                        y: event.clientY
+                    };
+                    const currentAngle = Math.atan2(current.y - center.y, current.x - center.x);
+                    const angleDifference = currentAngle - startAngle;
+
+                    const angle = (parseFloat(shape.getAttribute('data-angle')) || 0) + angleDifference * (180 / Math.PI);
+                    const x = parseFloat(shape.getAttribute('data-x')) || 0;
+                    const y = parseFloat(shape.getAttribute('data-y')) || 0;
+
+                    shape.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+                    shape.setAttribute('data-angle', angle);
+
+                    startAngle = currentAngle;
+                }
+            });
+        }
+
+        interact(shape)
+            .draggable({
+                listeners: {
+                    move(event) {
+                        const target = event.target;
+                        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                        const angle = parseFloat(target.getAttribute('data-angle')) || 0;
+
+                        target.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
+                    }
+                }
+            })
+            .resizable({
+                edges: { left: true, right: true, bottom: true, top: true },
+                listeners: {
+                    move(event) {
+                        const target = event.target;
+                        let x = (parseFloat(target.getAttribute('data-x')) || 0);
+                        let y = (parseFloat(target.getAttribute('data-y')) || 0);
+                        const angle = parseFloat(target.getAttribute('data-angle')) || 0;
+
+                        target.style.width = event.rect.width + 'px';
+                        target.style.height = event.rect.height + 'px';
+
+                        // Update the data-* attributes
+                        target.setAttribute('data-width', event.rect.width);
+                        target.setAttribute('data-height', event.rect.height);
+
+                        x += event.deltaRect.left;
+                        y += event.deltaRect.top;
+
+                        target.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
+
+                        const topDimension = target.querySelector('.top-dimension');
+                        const rightDimension = target.querySelector('.right-dimension');
+                        const bottomDimension = target.querySelector('.bottom-dimension');
+                        const leftDimension = target.querySelector('.left-dimension');
+
+                        topDimension.textContent = `${event.rect.width.toFixed(2)} px`;
+                        rightDimension.textContent = `${event.rect.height.toFixed(2)} px`;
+                        bottomDimension.textContent = `${event.rect.width.toFixed(2)} px`;
+                        leftDimension.textContent = `${event.rect.height.toFixed(2)} px`;
+                    }
+                }
+            });
+        }
+
+        function deleteShape() {
+            if (selectedShape) {
+                if (selectedShape.tagName === 'TEXTAREA') {
+                    selectedShape.remove();
+                } else {
+                    selectedShape.remove();
+                }
+                selectedShape = null;
+            }
+        }
+
+        document.body.addEventListener('click', (e) => {
+            if (isEditingTextField) return;
+            console.log("Body clicked");
+            if (e.target.classList.contains('shape') || 
+                e.target.classList.contains('handle') || 
+                e.target.classList.contains('rotate-handle') || 
+                e.target.tagName === 'TEXTAREA' || 
+                e.target.closest('#shapeProperties') || 
+                e.target.closest('#textProperties') || 
+                e.target.id === 'shapeMaterial' || 
+                e.target.id === 'shapeDepth') {
+                return;
+            }
+            
+            if (selectedShape) {
+                selectedShape.classList.remove('selected');
+                Array.from(selectedShape.querySelectorAll('.handle, .rotate-handle')).forEach(handle => handle.style.display = 'none');
+                selectedShape = null;
+            }
+            
+            document.getElementById('shapeProperties').classList.add('hidden');
+            document.getElementById('textProperties').classList.add('hidden');
+        });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.target.tagName === 'INPUT' || (event.target.tagName === 'TEXTAREA' && document.activeElement === event.target)) return;
+        if (event.key === "Delete" || event.key === "Backspace") {
+            deleteShape();
+        }
+
+    });
+
+    const colorPicker = document.getElementById('colorPicker');
+    colorPicker.addEventListener('input', function(e) {
+        console.log("Event triggered"); 
+        console.log("Selected color:", e.target.value);
+        if (selectedShape) {
+            console.log("Applying color to shape:", selectedShape);
+            selectedShape.style.backgroundColor = e.target.value;
+            selectedShape.setAttribute('data-color', e.target.value);
+        } else {
+            console.log("No shape selected");
+        }
+    });
+
+    document.getElementById('shapeWidth').addEventListener('input', function(e) {
+        if (selectedShape) {
+            selectedShape.style.width = e.target.value + 'px';
+            selectedShape.setAttribute('data-width', e.target.value);
+        }
+    });
+
+    document.getElementById('shapeHeight').addEventListener('input', function(e) {
+        if (selectedShape) {
+            selectedShape.style.height = e.target.value + 'px';
+            selectedShape.setAttribute('data-height', e.target.value);
+        }
+    });
+
+    document.getElementById('textBold').addEventListener('click', function(e) {
+        this.classList.toggle('active'); 
+        if (selectedShape && selectedShape.tagName === 'TEXTAREA') {
+            selectedShape.style.fontWeight = this.classList.contains('active') ? 'bold' : 'normal';
+        }
+    });
+
+    document.getElementById('textItalic').addEventListener('click', function(e) {
+        this.classList.toggle('active'); 
+        if (selectedShape && selectedShape.tagName === 'TEXTAREA') {
+            selectedShape.style.fontStyle = this.classList.contains('active') ? 'italic' : 'normal';
+        }
+    });
+
+    document.getElementById('textUnderline').addEventListener('click', function(e) {
+        this.classList.toggle('active'); 
+        if (selectedShape && selectedShape.tagName === 'TEXTAREA') {
+            selectedShape.style.textDecoration = this.classList.contains('active') ? 'underline' : 'none';
+        }
+    });
+
+    document.getElementById('textColor').addEventListener('input', function(e) {
+        if (selectedShape && selectedShape.tagName === 'TEXTAREA') {
+            selectedShape.style.color = e.target.value;
+            selectedShape.setAttribute('data-text-color', e.target.value);
+        }
+    });
+
+    document.getElementById('fontSize').addEventListener('input', function(e) {
+        if (selectedShape && selectedShape.tagName === 'TEXTAREA') {
+            selectedShape.style.fontSize = e.target.value + 'px';
+            selectedShape.setAttribute('data-font-size', e.target.value);
+        }
+    });
+
+    document.getElementById('fontType').addEventListener('change', function(e) {
+        if (selectedShape && selectedShape.tagName === 'TEXTAREA') {
+            selectedShape.style.fontFamily = e.target.value;
+            selectedShape.setAttribute('data-font-type', e.target.value);
+        }
+    });
+
+    function showScale() {
+        var canvasScale = document.getElementById('canvasScale');
+        if (canvasScale.style.display === 'block') {
+            canvasScale.style.display = 'none';
+        } else {
+            canvasScale.style.display = 'block';
+        }
+    }
+
+    textField.addEventListener('focus', () => {
+        isEditingTextField = true;
+    });
+
+    textField.addEventListener('blur', () => {
+        isEditingTextField = false;
+    });
+
+    function measure() {
+        showDimensions = !showDimensions; 
+
+        const dimensions = document.querySelectorAll('.dimension');
+        dimensions.forEach(dimension => {
+            dimension.style.display = showDimensions ? 'block' : 'none';
+        });
+    }
+
+    function collectDesignData() {
+        const shapes = document.querySelectorAll('.shape'); 
+        if (!shapes.length) return null;
+
+        const shapesData = [];
+
+        shapes.forEach(shape => {
+            const width = shape.getAttribute('data-width');
+            const height = shape.getAttribute('data-height');
+            const material = shape.getAttribute('data-material');
+            const depth = shape.getAttribute('data-depth');
+
+            shapesData.push({
+                width,
+                height,
+                material,
+                depth
+            });
+        });
+        console.log("Shapes Data:", shapesData);
+        return shapesData;
+    }
+</script>
+
+<script>
+    function appendUserMessage(message) {
+        const chatContent = document.getElementById('chatContent');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message user-message';
+        messageDiv.textContent = message;
+        chatContent.prepend(messageDiv); 
+    }
+
+    function appendAssistantMessage(message) {
+        const chatContent = document.getElementById('chatContent');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message assistant-message';
+        messageDiv.textContent = message;
+        chatContent.prepend(messageDiv); 
+    }
+
+    async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (message !== '') {
+            appendUserMessage(message);
+            chatInput.value = '';
+
+            //Handle user input !!!
+            const designData = collectDesignData();
+
+            const user_message = [
+                { "role": "user", "content": `You are an engineering expert, but to not refer to yourself as such. Your name is Axi. The user has access to the following 3D printing filament materials: Thermoplastics include PLA (Polylactic Acid) at $2/cubic unit, ABS (Acrylonitrile Butadiene Styrene) at $2.5/cubic unit, PETG (Polyethylene Terephthalate Glycol) at $2.2/cubic unit, TPU (Thermoplastic Polyurethane) at $2.8/cubic unit, HIPS (High Impact Polystyrene) at $2.1/cubic unit, ASA (Acrylonitrile Styrene Acrylate) at $2.4/cubic unit, PC (Polycarbonate) at $3.0/cubic unit, PP (Polypropylene) at $1.9/cubic unit, and PEKK (Polyetherketoneketone) at $3.2/cubic unit. Composite Filaments consist of Wood-filled at $2.7/cubic unit, Metal-filled at $3.5/cubic unit, Carbon Fiber-filled at $3.8/cubic unit, Stone-filled at $2.9/cubic unit, and Glass-filled at $3.1/cubic unit. High Performance materials are Nylon at $4/cubic unit, Ultem (PEI) at $4.2/cubic unit, and PEEK (Polyether Ether Ketone) at $4.5/cubic unit. Lastly, Flexible Filaments include TPE (Thermoplastic Elastomer) at $2.6/cubic unit. The user is designing an assistive device with the following properties: ${JSON.stringify(designData)}. You do not need to restate these properties, only mention them if needed for answering their question. Keep your answer less than 100 words. This is their message to you: ${message}` },
+            ];
+            console.log(user_message);
+
+            const headers = {
+                'Authorization': `Bearer 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`,
+                'Content-Type': 'application/json',
+            };
+
+            const api_endpoint = 'https://api.openai.com/v1/chat/completions';
+
+            const response_openai = await fetch(api_endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ messages: user_message, model: "gpt-3.5-turbo" }),
+            });
+            const openai_json = await response_openai.json();
+            const aiResponse = openai_json.choices[0].message.content;
+            appendAssistantMessage(aiResponse);
+        }
+    }
+
+    function handleChatInput(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    function toggleChatbox() {
+        var chatbox = document.getElementById('chatbox');
+        chatbox.style.display = chatbox.style.display === 'block' ? 'none' : 'block';
+    }
+
+
+    var chatImage = document.getElementById('chatImage');
+    chatImage.addEventListener('click', sendMessage);
+
+    var chatInput = document.getElementById('chatInput');
+
+    chatInput.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    function toggleChatbox() {
+        var chatbox = document.getElementById('chatbox');
+        chatbox.style.display = chatbox.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.getElementById("customImage").addEventListener("click", function() {
+        window.location.href = "index.html";
+    });
+</script>
+
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap" rel="stylesheet">
+
+  <title>AssistTechAI</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Istok Web", Arial, sans-serif;
+    background-color: #395BD3;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #395BD3;
+    color: #FFF;
+    padding: 30px;
+    margin-top: 30px;
+  }
+
+  .logo {
+    margin-left: 30px;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    margin-right: 30px;
+  }
+
+  .nav-links li {
+    margin-left: 100px;
+    margin-right: 10px;
+  }
+
+  .nav-links li:first-child {
+    margin-left: 0;
+  }
+
+  .logo img {
+    height: 110px;
+    width: auto;
+  }
+
+  .nav-links a {
+    color: #FFF;
+    text-decoration: none;
+    position: relative;
+    font-family: "Istok Web", Arial, sans-serif;
+    font-size: 18px;
+  }
+
+  .nav-links a:hover {
+    border-bottom: 2px solid #FFF;
+  }
+
+  .help-text {
+    margin-top: 300px;
+    margin-left: 100px;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .help-content {
+    flex: 1;
+  }
+
+  .help-text p {
+    font-size: 4vw;
+    color: #FFF;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    max-width: calc(100% - 100px);
+  }
+
+  .description {
+    margin-top: -85px;
+    margin-left: 100px;
+    color: #FFF;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  #typewriter {
+    display: inline-block;
+    border-right: 2px solid #FFF;
+    animation: typing 4s steps(40, end), blink-caret 0.5s step-end infinite;
+  }
+
+  .link-image {
+    margin-top: 20px;
+    margin-left: 200px;
+    cursor: pointer;
+    width: 200px; 
+    max-width: 100%; 
+    filter: drop-shadow(4px 4px 10px rgba(0, 0, 0, 0.2));
+  }
+
+  .textbox {
+    margin: 0 20px;
+    margin-top: 190px; 
+    width: calc(100% - 40px); 
+    padding: 20px;
+    color: #FFF;
+    font-size: 1.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .textbox p {
+    margin-top: 30px; 
+  }
+
+
+  @keyframes typing {
+    from {
+      width: 0;
+    }
+    to {
+      width: 350px;
+    }
+  }
+
+  @keyframes blink-caret {
+    from,
+    to {
+      border-color: transparent;
+    }
+    50% {
+      border-color: #FFF;
+    }
+  }
+
+  .box {
+    margin: 20px;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .box-content {
+    padding: 20px;
+    color: #FFF;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .box1 {
+    width: 508px;
+    height: 309px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    margin-top: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .box2 {
+    width: 405px;
+    height: 309px;
+    background-color: #ffffff;
+    margin-top: 180px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .box3 {
+    width: 390px;
+    height: 500px;
+    background-color: #ffffff;
+    margin-top: 50px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .box4 {
+    width: 550px;
+    height: 363px;
+    background-color: #D9D9D9;
+    margin-top: 0px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .box1-text {
+    margin-top: 20px;
+    font-size: 25px;
+    color: #395BD3;
+    font-family: "Istok Web", Arial, sans-serif;
+  }
+
+  .box1-otherText {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #2d2d2d;
+  }
+
+  .box2-text {
+    margin-top: -50px;
+    font-size: 25px;
+    color: #395BD3;;
+  }
+
+  .box3-text {
+    margin-top: 20px;
+    font-size: 25px;
+    color: #395BD3;
+  }
+
+  .box4-text {
+    margin-top: -50px;
+    font-size: 25px;
+    color: #395BD3;
+  }
+
+  .embed-window {
+    width: 100%;
+    height: 250px;
+    border: 1px solid #FFF;
+  }
+
+  .center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .gif {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+  }
+
+  .image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-top: -10px;
+  }
+
+  input[type="text"] {
+    width: 90%; 
+    padding: 10px; 
+    font-size: 18px; 
+    border: none; 
+    border-radius: 15px; 
+    background-color: #cdd1e1; 
+    margin-top: 20px;
+    opacity: 1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #152252;
+  }
+
+  input[type="text"]:focus {
+    outline: none; 
+    border-color: #ffffff;
+    box-shadow: 0 0 5px #395BD3; 
+  }
+
+  .image-container-AboutUs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
+
+  .image-container-AboutUs img {
+    max-width: 40%; 
+    height: auto;
+  }
+
+  .about-us-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 1000px; 
+      margin: 0 auto; 
+  }
+
+  .about-us-image {
+      flex: 1;
+      padding: 20px;
+  }
+
+  .about-us-text {
+      flex: 1;
+      padding: 20px;
+  }
+
+  h1 {
+      text-align: center;
+  }
+
+  img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+      .about-us-container {
+          flex-direction: column;
+      }
+
+      .about-us-image {
+          margin-right: 0; 
+          margin-bottom: 20px;
+      }
+  }
+  
+  .image-container {
+    position: absolute;
+    left: 20px;  
+    top: 780px;   
+  }
+
+  .image-container img {
+    width: 30%;   
+    height: auto;  
+    max-width: none;  
+  }
+
+  .section {
+  width: 100%; 
+  height: 200px; 
+  background-color: #395BD3; 
+ 
+}
+
+</style>
+<body>
+  <nav>
+    <div class="logo">
+      <img src="HomeLogo.png" alt="Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="service.html">Service</a></li>
+      <li><a href="creative.html">Create</a></li>
+    </ul>
+  </nav>
+
+  <div class="help-text">
+    <div class="help-content">
+      <p>I need help with <span id="typewriter"></span></p>
+    </div>
+  </div>
+  <div class="description">
+    <p>Empowering Accessibility through AI: AssistTechAI, where text transforms into tailor-made 3D solutions for a more inclusive world.</p>
+  </div>
+
+  <div class="image-container">
+    <a href="service.html" class="link-image">
+      <img src="GetStarted.png" alt="Image Link" width="250px" height="140.625">
+    </a>
+  </div>
+
+  <div class="section"></div>
+
+  <div class="textbox">
+    <h3>How do I use AssistTechAI?</h3>
+  </div>
+
+  <div class="box box1">
+    <div class="box-content">
+      <p class="box1-text">Step 1: Input what you need</p>
+      <p class="box1-otherText">I need help with:</p>
+      <input type="text" placeholder="...tying my shoe" style="font-family: Istok Web, Arial, sans-serif;">
+    </div>
+  </div>
+  <div class="box box2">
+    <div class="box-content center-content">
+      <p class="box2-text">Step 2: Click Generate</p>
+      <a href="service.html">
+      <img class="image" src="homeGenerate.png" width="200px" height="113px">
+      </a>
+    </div>
+  </div>
+  <div class="box box3">
+    <div class="box-content">
+      <p class="box3-text">Step 3: Thats it! Let the AI do its thing and you have a 3D model of your assistive device!!</p>
+      <img src="carKey1.gif" alt="Animated GIF" width="300px" style="border-radius: 10px">
+    </div>
+  </div>
+  <div class="box box4">
+    <div class="box-content center-content">
+      <p class="box4-text">Have a specific design in mind? Head over to our creative page to design your own device!!</p>
+      <a href="creative.html">
+      <img class="image" src="Create.png" width="200px" height="113px">
+      </a>
+    </div>
+  </div>
+
+  <div class="image-container-AboutUs">
+    <img src="About Us title.jpg" alt="Centered Image">
+  </div>
+
+  <div class="about-us-container">
+    <div class="about-us-image">
+        <img src="HomeLogo.png">
+    </div>
+    
+    <div class="about-us-text">
+        <p style="color: white">
+          In an era of rapid technological advancement, the potential of technology as an invaluable tool 
+          for human betterment continues to captivate our imagination. Embracing this vision, the
+          AssistTechAI team are unwaveringly committed to leveraging technology's power to aid and uplift individuals. 
+          With a longstanding dedication to supporting the disabled community, we have consistently sought ways to make a 
+          positive impact. Recognizing the untapped potential at the intersection of technology and accessibility, we were 
+          driven by a deep sense of purpose to embark on the journey of crafting a project that could truly make a difference. Thus, AssistTechAI emerged as the culmination of our aspirations, a testament to the belief that technology, harnessed thoughtfully, can enhance lives and foster inclusivity for all.
+        </p>
+    </div>
+</div>
+
+
+  <script src="typingAnimation.js"></script>
+</body>
+</html>
